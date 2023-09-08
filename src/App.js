@@ -8,8 +8,8 @@ class App extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
-            items : [{ id:0, title: "Hello World 1", done: true},
-                { id:1, title: "Hello World 2", done: false},]
+            items : [{ id:"ID-0", title: "Hello World 1", done: true},
+                { id:"ID-1", title: "Hello World 2", done: false},]
         };
     }
     //함수 추가
@@ -31,7 +31,29 @@ class App extends React.Component{
             console.log("Update Items :",this.state.items);
         })
     }
-  render() {
+    componentDidMount() {
+        const requestOptions={
+            method:"GET",
+            headers:{
+                "Content-Type":"application/json"
+            }
+        };
+
+        fetch("http://localhost:8080/todo",requestOptions)
+            .then((response)=>
+                response.json()
+            ).then(
+                (response) => {
+                this.setState({
+                    items: response.data,
+                });
+            },
+                (error)=>{
+                    this.setState({error,});
+                });
+    }
+
+    render() {
         var todoItems = this.state.items.length > 0 && (
             <Paper style={{margin:16}}>
                 <List>
@@ -42,7 +64,7 @@ class App extends React.Component{
             </Paper>
         );
     return(
-      <div ClassName="App">
+      <div className="App">
           <Container maxWidth="md">
               <AddTodo add={this.add}/>
               <div className="TodoList">{todoItems}</div>
